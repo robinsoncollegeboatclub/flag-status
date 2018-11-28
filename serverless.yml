@@ -1,0 +1,58 @@
+service: flag-status-crawler
+
+custom:
+  resource: flag-status
+  configuration:
+    metOfficeKey: ${ssm:metOfficeKey}
+    dynamoDbTable: flag-status-crawl-results
+    locationId: 310042
+
+provider:
+  name: aws
+  region: eu-west-2 # Set the region of the AWS provider to EU West 2 (London)
+  runtime: nodejs8.10
+  profile: rcbc
+  stage: production
+  environment:
+    MET_OFFICE_KEY: ${self:custom.configuration.metOfficeKey}
+    DYNAMODB_TABLE: ${self:custom.configuration.dynamoDbTable}
+    LOCATION_ID: ${self:custom.configuration.locationId}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.configuration.dynamoDbTable}"
+
+functions:
+  crawl:
+    handler: handlers.crawl
+    events:
+    - schedule:
+        name: crawl-flag-status-and-weather-event
+        description: 'Triggers crawling flag status from CUCBC and weather forecast from Met Office'
+        rate: rate(1 hour)
+        enabled: true
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.configuration.dynamoDbTable}

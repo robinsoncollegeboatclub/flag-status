@@ -1,0 +1,17 @@
+{
+  "name": "flag-status",
+  "version": "1.0.0",
+  "description": "A Node script to retrieve weather information and the CUCBC flag status.",
+  "main": "index.js",
+  "repository": "git@github.com:robinsoncollegeboatclub/flag-status",
+  "author": "Robinson College Boat Club <webmaster@robinsonboatclub.co.uk>",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.365.0",
+    "cheerio": "^1.0.0-rc.2",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  }
+}
