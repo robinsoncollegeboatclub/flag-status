@@ -129,7 +129,7 @@ module.exports = (event, context, callback) => {
             return _.mapKeys(forecast, (v, k) => _.camelCase(k));
         })
         .then((flagAndWeatherMap) => {
-            const timestamp = new Date().getTime();
+            const timestamp = moment().toISOString();
 
             const params = {
                 TableName: process.env.DYNAMODB_TABLE,
