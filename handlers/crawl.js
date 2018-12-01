@@ -115,7 +115,7 @@ module.exports = (event, context, callback) => {
 
     const flagStatusPromise = rp(options)
         .then(($) => $("#content-header a[href=\"/flag\"] img").attr("src"))
-        .then((src) => flagStatusMap[src])
+        .then((src) => src in flagStatusMap ? flagStatusMap[src] : "Unknown")
         .then((flagStatus) => {
             console.log(`Current Flag Status: ${flagStatus}`);
             console.log();
